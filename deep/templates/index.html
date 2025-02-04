@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ML Video Generation</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Pacifico|Arimo|Hind:300|Open+Sans+Condensed:300"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Arimo", sans-serif;
+        text-align: center;
+        padding: 20px;
+      }
+      .login {
+        margin: 50px auto;
+        max-width: 400px;
+      }
+      h1 {
+        font-family: "Pacifico", cursive;
+        color: #333;
+      }
+      form {
+        margin: 20px 0;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        flex-grow: 1;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      video {
+        margin-top: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .metrics {
+        margin-top: 20px;
+        text-align: left;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      #status-message {
+        font-weight: bold;
+        color: #ff5722;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login">
+      <h1>Upload Video for Prediction</h1>
+      <form action="/predict" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept="video/*" required />
+        <button type="submit" name="model" value="convlstm">ConvLSTM</button>
+        <button type="submit" name="model" value="predrnn">PredRNN</button>
+        <button type="submit" name="model" value="transformer">Transformer</button>
+      </form>
+      <p id="status-message"></p>
+      {% if video_path %}
+      <h2>Generated Video:</h2>
+      <video width="400" controls>
+        <source src="{{ video_path }}" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <div class="metrics">
+        <h3>Metrics</h3>
+        <p><b>Total Inference Time:</b> {{ inference_time }} seconds</p>
+        <p><b>Frame Inference Times (ms):</b></p>
+        <ul>
+          {% for time in frame_times %}
+          <li>Frame {{ loop.index }}: {{ time | round(3) }} ms</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% else %}
+      <p>No video generated yet.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>
